@@ -1,6 +1,15 @@
 stages:
+  - debug
   - sync
 
+# Задача для проверки переменных и отладки
+debug_job:
+  stage: debug
+  script:
+    - echo "Проверка переменной GITHUB_TOKEN: ${GITHUB_TOKEN}"
+    - echo "Файл конфигурации работает"
+
+# Основная задача для синхронизации
 sync_to_github:
   stage: sync
   script:
