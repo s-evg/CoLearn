@@ -6,7 +6,6 @@ stages:
 debug_job:
   stage: debug
   script:
-    - echo "Проверка переменной GITHUB_SYNC: ${GITHUB_SYNC}"
     - echo "Файл конфигурации работает"
 
 # Основная задача для синхронизации
