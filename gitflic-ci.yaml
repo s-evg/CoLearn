@@ -1,12 +1,6 @@
 stages:
   - deploy
 
-# Задача для проверки переменных и отладки
-debug_job:
-  stage: deploy
-  script:
-    - echo "Файл конфигурации работает"
-
 # Основная задача для синхронизации
 sync_to_github:
   stage: deploy
