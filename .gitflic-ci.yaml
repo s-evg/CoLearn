@@ -1,17 +1,18 @@
 stages:
-  - debug
+  - test
   - sync
 
-# Задача для проверки переменных и отладки
-debug_job:
-  stage: debug
+# Простой тестовый job
+test_job:
+  stage: test
   script:
-    - echo "Файл конфигурации работает"
+    - echo "Hello, World!"
 
 # Основная задача для синхронизации
 sync_to_github:
   stage: sync
   script:
+    - echo "Начинаем синхронизацию с GitHub"
     - git config --global user.name "gitflic-bot"
     - git config --global user.email "bot@gitflic.ru"
     - git remote add github https://s-evg:${GITHUB_SYNC}@github.com/s-evg/CoLearn.git
