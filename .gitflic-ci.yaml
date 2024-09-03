@@ -10,4 +10,4 @@ sync_to_github:
     - git push github --all
     - git push github --tags
   only:
-    - branches  # Пушит все ветки
+    - branches
