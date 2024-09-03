@@ -1,16 +1,6 @@
 stages:
   - deploy
 
-# Простой тестовый job с before_script и after_script
-debug_job:
-  stage: deploy
-  before_script:
-    - echo "Начало выполнения задачи"
-  script:
-    - echo "Файл конфигурации работает"
-  after_script:
-    - echo "Задача завершена"
-
 # Основная задача для синхронизации
 sync_to_github:
   stage: deploy
