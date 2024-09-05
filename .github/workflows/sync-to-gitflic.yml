@@ -44,7 +44,7 @@ jobs:
       - name: Add GitFlic remote for Wiki
         run: |
           cd wiki
-          git remote add gitflic https://s-evg:${{ secrets.GITFLIC_TOKEN }}@gitflic.ru/project/s-evg/colearn.wiki.git
+          git remote add gitflic https://s-evg:${{ secrets.GITFLIC_WIKI }}@gitflic.ru/project/s-evg/colearn.wiki.git
 
       - name: Push Wiki to GitFlic
         run: |
