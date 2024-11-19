@@ -14,7 +14,7 @@
 ### 1. Запуск скрипта
 Запустите скрипт, передав URL-адрес вашего репозитория в качестве аргумента:
 ```bash
-./deploy_script.sh https://github.com/user/repo.git
+./auto_deploy.sh https://github.com/user/repo.git
 ```
 
 ### 2. Установка зависимостей
