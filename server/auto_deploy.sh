@@ -1,4 +1,5 @@
 #!/bin/bash
+# разворачивает новый микросервис
 
 # Параметры
 REPO_URL=$1
@@ -65,14 +66,6 @@ select script_file in *.py; do
   fi
 done
 
-# Запрос на запуск скрипта
-read -p "Хотите запустить скрипт $script_file? (y/n): " run_script
-if [ "$run_script" == "y" ]; then
-  echo "Запускаем скрипт $script_file..."
-  python3 "$script_file"
-else
-  echo "Вы не запустили скрипт."
-fi
 
 # Запрос на создание автозапуска
 read -p "Хотите настроить автозапуск после перезагрузки? (y/n): " setup_autostart
@@ -112,7 +105,6 @@ if [ "$setup_cron" == "y" ]; then
   echo "4) Каждые 6 часов"
   echo "5) Ежедневно в 6 часов утра и вечера"
   echo "6) Ежедневно в полночь"
-
   read -p "Введите номер (1-6): " schedule_option
   case $schedule_option in
     1)
@@ -141,10 +133,27 @@ if [ "$setup_cron" == "y" ]; then
 
   echo "Добавляем cron-задачу для обновления проекта $PROJECT_NAME..."
   crontab -l > mycron
-  echo "$cron_schedule cd $PROJECT_DIR && git fetch && git pull && sudo systemctl restart $PROJECT_NAME.service >> $PROJECT_DIR/cron_update.log 2>&1" >> mycron
+  echo "$cron_schedule cd $PROJECT_DIR && git fetch && [ \$(git rev-parse HEAD) != \$(git rev-parse @{u}) ] && git pull && sudo systemctl restart $PROJECT_NAME.service >> $PROJECT_DIR/cron_update.log 2>&1" >> mycron
   crontab mycron
   rm mycron
   echo "Cron-задача добавлена для $PROJECT_NAME. Расписание: $cron_schedule."
+
 fi
+
+
+# Запрос на запуск скрипта
+read -p "Хотите сейчас запустить скрипт $script_file? (y/n): " run_script
+if [ "$run_script" == "y" ]; then
+  echo "Запускаем скрипт $script_file..."
+  python3 "$script_file"
+else
+  echo "Вы не запустили скрипт."
+fi
+
+
+# Принудительная перезагрузка systemd и активация службы
+sudo systemctl daemon-reload
+sudo systemctl enable "$PROJECT_NAME.service"
+sudo systemctl restart "$PROJECT_NAME.service"
 
 echo "Деплой завершён для проекта $PROJECT_NAME."
