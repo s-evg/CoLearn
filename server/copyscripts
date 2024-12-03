@@ -1,0 +1,63 @@
+#!/bin/bash
+# Создаёт /usr/local/sesc и копирует туда скрипты из текущего каталога
+
+# Каталог назначения
+TARGET_DIR="/usr/local/sesc"
+
+# Проверка существования каталога, создание если отсутствует
+if [ ! -d "$TARGET_DIR" ]; then
+    sudo mkdir -p "$TARGET_DIR"
+    echo "Создан каталог: $TARGET_DIR"
+fi
+
+# Назначение прав на каталог
+sudo chmod 755 "$TARGET_DIR"
+
+# Определение имени скрипта, который выполняется
+SCRIPT_NAME=$(basename "$0")
+
+# Скопировать скрипты
+SCRIPT_DIR="$(dirname "$0")"
+#echo $SCRIPT_DIR
+for script in "$SCRIPT_DIR"/*; do
+    # Проверяем, что это файл и он не имеет расширения
+    #echo $script
+    if [ -f "$script" ] && [[ "${script##*.}" == "$script" ]] && [ "$(basename "$script")" != "$SCRIPT_NAME" ]; then
+        target_script="$TARGET_DIR/$(basename "$script")"
+        if [ -f "$target_script" ]; then
+            # Диалог на замену
+            read -p "Файл $(basename "$script") уже существует. Заменить? (да/нет): " choice
+            case "$choice" in
+                [Дд][Аа]|[Дд]|[Yy]|[Yy][Ee][Ss])
+                    sudo cp "$script" "$target_script"
+                    echo "Файл $(basename "$script") заменен."
+                    ;;
+                *)
+                    echo "Файл $(basename "$script") пропущен."
+                    continue
+                    ;;
+            esac
+        else
+            sudo cp "$script" "$target_script"
+            echo "Файл $(basename "$script") скопирован."
+        fi
+        sudo chmod +x "$target_script"
+    fi
+
+done
+
+# Сделать каталог доступным для всех пользователей
+sudo chmod -R o+rX "$TARGET_DIR"
+
+# Добавить каталог в PATH
+if [ ! -f "/etc/profile.d/sesc.sh" ]; then
+    echo "export PATH=\"/usr/local/sesc:\$PATH\"" | sudo tee /etc/profile.d/sesc.sh > /dev/null
+    sudo chmod +x /etc/profile.d/sesc.sh
+    echo "Каталог $TARGET_DIR добавлен в PATH."
+fi
+
+# Применить изменения
+source /etc/profile.d/sesc.sh
+
+
+echo "Установка завершена."
